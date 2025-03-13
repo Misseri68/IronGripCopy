@@ -1,0 +1,79 @@
+﻿@using IronGrip.Models
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    Usuario user = Context.Session.GetObject<Usuario>("USER");
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - IronGrip</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/IronGrip.styles.css" asp-append-version="true" />
+</head>
+
+<body>
+    <div class="phone-container">
+        @if(user != null)
+        {
+            <header>
+                <nav style="background-color: #FC5B04">
+                    <div class="navbar-collapse collapse d-flex justify-content-between ms-3 me-3">
+                        <a class=""
+                           asp-controller="Home" asp-action="Home"
+                           style="color:black; text-decoration:none;">🏠︎</a>
+                        <img src="~/images/default/logo.png" style="width:100px" />
+                        <a class="d-block"
+                           asp-controller="Usuarios" asp-action="Perfil"
+                           style="color:black; text-decoration:none;">👤</a>
+                    </div>
+                </nav>
+            </header>
+        }
+        <div class="container">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+   
+   
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center; /* Centrar horizontalmente */
+        align-items: center; /* Centrar verticalmente */
+        height: 100vh; /* Ocupar toda la altura de la ventana */
+        background-image: url('/images/default/background_Default.jpg') /* Imagen de fondo */;
+        background-size: cover; /* Cubrir todo el fondo */
+        background-position: center; /* Centrar la imagen */
+    }
+
+    /* Contenedor que simula la pantalla del teléfono */
+    .phone-container {
+        width: 360px; /* Ancho de un teléfono móvil */
+        height: 700px; /* Alto de un teléfono móvil */
+        background-color: #121212; /* Fondo blanco para el "teléfono" */
+        border: 7px solid black; /* Marco del teléfono */
+        border-radius: 30px; /* Bordes redondeados */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); /* Sombra */
+        overflow: hidden; /* Para que el contenido no se salga del contenedor */
+    }
+
+    .phone-container{
+        color:floralwhite;
+    }
+</style>

@@ -1,0 +1,23 @@
+﻿@model List<Ejercicio>
+
+    @if(Model != null){
+    <button onclick="window.history.back()">Volver atrás</button>
+    <form method="post">
+        <h3>Primero, selecciona un ejercicio.</h3>
+        <select name="ejercicio">
+            @foreach (Ejercicio ej in Model)
+            {
+                <option value="@ej.Id"> @ej.Nombre</option>
+            }
+        </select>
+        <button>Seleccionar Ejercicio</button>
+    </form>
+
+    }
+    else{
+        <p>
+            Todavía no has creado ningún ejercicio.      
+        </p>
+    <button><a asp-action="Create" asp-controller="Ejercicios">Crear Ejercicio</a></button>
+
+    }

@@ -1,0 +1,69 @@
+﻿@model List<Ejercicio>
+
+<button><a asp-action="Create"> Crear nuevo entrenamiento </a></button>
+
+@if(Model != null){
+    <div class="container">
+        @foreach (var ejercicio in Model)
+        {
+            <div class="card">
+                <img src="@ejercicio.Foto" alt="@ejercicio.Nombre">
+                <h2>@ejercicio.Nombre</h2>
+                <p>@ejercicio.Descripcion</p>
+                @if (ejercicio.EsTiempo)
+                {
+                    <span>⏱️</span>
+                }
+                <div class="tags">
+                    @foreach (var tag in ejercicio.Tags)
+                    {
+                        <div class="tag">
+                            <div class="tag-circle" style="background-color: @tag.Color;"></div>
+                            <span>@tag.Nombre</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}else{
+    <p>No hay ejercicios aún.</p>
+}
+
+
+<style>
+    body {
+        background-color: #121212;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+    }
+
+    .card {
+        background-color: #1e1e1e;
+        border-radius: 10px;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+    .tag {
+        display: inline-flex;
+        align-items: center;
+        background-color: #333;
+        border-radius: 15px;
+        padding: 5px 10px;
+        margin: 5px 5px 0 0;
+    }
+
+    .tag-circle {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
+</style>

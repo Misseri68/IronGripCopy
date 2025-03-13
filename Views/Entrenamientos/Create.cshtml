@@ -1,0 +1,173 @@
+﻿@model VistaEntrenamiento
+
+<div class="d-flex">
+    <h4>A por todas!!</h4>
+    <button class="btn btn-danger">X</button>
+</div>
+
+<div style="background-color:darkslategray">
+
+    <select id="tag-select">
+        <option value="">-- Selecciona un tag --</option>
+        <option value="newTag"><a asp-action="Create" asp-controller="Tags">+ Nuevo tag</a></option>
+        @if(Model.TagsDisponibles != null)
+        {
+            @foreach (var tag in Model.TagsDisponibles)
+            {
+                var seleccionado = Model.SelectedTags.Contains(tag.Id);
+                <option value="@tag.Id" data-color="@tag.Color" disabled="@(seleccionado)">
+                    @tag.Nombre @(seleccionado ? "✓" : "")
+                </option>
+            }
+        }
+    </select>
+
+    <div id="selected-tags">
+        @foreach (var tag in Model.TagsDisponibles.Where(t => Model.SelectedTags.Contains(t.Id)))
+        {
+            <span class="tag-box" data-id="@tag.Id" style="background-color: @tag.Color;">
+                @tag.Nombre <button type="button" class="remove-tag">X</button>
+            </span>
+        }
+    </div>
+</div>
+
+<div>
+        @Html.Partial("_partialEjercicioCard", Model.EjerciciosHechosModel ?? new List<PartialEjercicioModel>())
+</div>
+
+<form method="post">
+    <button>Enviar</button>
+</form>
+
+@section Scripts{
+    <script>
+        const tagSelect = document.getElementById('tag-select');
+        const selectedTagsDiv = document.getElementById('selected-tags');
+        const selectedTagsSet = new Set();
+
+        // Inicializar el Set con los que ya están seleccionados
+        @foreach (var tagId in Model.SelectedTags)
+        {
+            <text>selectedTagsSet.add(@tagId);</text>
+        }
+
+        function actualizarServidor() {
+            if (selectedTagsSet.size === 0) {
+            return; // No hace nada si no hay tags seleccionados
+            }
+            // Creamos un form invisible solo para enviar los datos al servidor
+            const form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/Entrenamientos/UpdateTags';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'tagsSeleccionadosIds';
+            input.value = Array.from(selectedTagsSet).join(',');
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit(); // enviar automáticamente
+        }
+
+        function desactivarOpcion(id) {
+            const option = tagSelect.querySelector(`option[value="${id}"]`);
+            if (option) {
+                option.disabled = true;
+                if (!option.textContent.includes("✓")) {
+                    option.textContent += " ✓";
+                }
+            }
+        }
+
+        function crearTagVisual(id, nombre, color) {
+            const span = document.createElement('span');
+            span.className = 'tag-box';
+            span.style.backgroundColor = color;
+            span.dataset.id = id;
+            span.innerHTML = `${nombre} <button type="button" class="remove-tag">X</button>`;
+            selectedTagsDiv.appendChild(span);
+        }
+
+        tagSelect.addEventListener('change', () => {
+            const selectedValue = tagSelect.value;
+            if (selectedValue === "nuevo") {
+                window.location.href = "/Tags/Create";
+                return;
+            }
+
+            const id = parseInt(selectedValue);
+            if (selectedTagsSet.has(id)) return;
+
+            const option = tagSelect.options[tagSelect.selectedIndex];
+            const color = option.getAttribute('data-color');
+            const nombre = option.textContent.replace("✓", "").trim();
+
+            selectedTagsSet.add(id);
+            crearTagVisual(id, nombre, color);
+            desactivarOpcion(id);
+            tagSelect.selectedIndex = 0;
+
+            actualizarServidor(); // actualizar en el backend
+        });
+
+        // Delegación para quitar tag visual y del Set
+        selectedTagsDiv.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-tag')) {
+                const tagBox = e.target.parentElement;
+                const id = parseInt(tagBox.dataset.id);
+
+                selectedTagsSet.delete(id);
+                tagBox.remove();
+
+                // Reactivar opción en el select
+                const option = tagSelect.querySelector(`option[value="${id}"]`);
+                if (option) {
+                    option.disabled = false;
+                    option.textContent = option.textContent.replace(" ✓", "");
+                }
+
+                actualizarServidor(); // actualizar en backend
+            }
+        });
+
+        // Al inicio: desactivar opciones seleccionadas
+        selectedTagsSet.forEach(id => desactivarOpcion(id));
+
+
+
+        $(document).ready(function () {
+            console.log("HOLA")
+            $('input[name="listGroupCheckableRadios"]').on('click', function () {
+                const selectedValue = $(this).val();
+                if (selectedValue === 'newEjercicio') {
+                    window.location.href = "/EjerciciosHechos/Create/";
+                }
+            });
+        });
+
+
+
+    </script>
+}
+
+<style>
+    .tag-box {
+        display: inline-block;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 10px;
+        margin-right: 5px;
+        margin-top: 5px;
+    }
+
+    .tag-box button {
+        background: none;
+        border: none;
+        color: white;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+
+</style>

@@ -1,0 +1,52 @@
+﻿@model PartialEjercicioModel
+
+<h3>@Model.Ejercicio.Nombre</h3>
+
+<div id="tarjetas-container">
+    @foreach (Serie serie in Model.Series)
+    {
+        <div class="tarjeta">
+            <form  method="post">
+                <input type="hidden" name="idModel" value="@Model.EjercicioHecho.Id" />
+                <input type="hidden" name="Id" value="@serie.Id" />
+                <input type="number" name="Peso" value="@serie.Peso" />
+                <input type="number" name="Repeticiones" value="@serie.Repeticiones" />
+                <input type="number" name="NumSeries" value="@serie.NumSeries" />
+                <button type="submit">Confirmar</button>
+            </form>
+        </div>
+    }
+    <div class="tarjeta" id="nueva-tarjeta" >
+        <form  method="post">
+            <input type="hidden" name="idModel" value="@Model.EjercicioHecho.Id" />
+            <input type="hidden" name="Id" value="@Model.EjercicioHecho.Id" />
+            <input type="number" name="Peso" placeholder="Peso" />
+            <input type="number" name="Repeticiones" placeholder="Repeticiones" />
+            <input type="number" name="NumSeries" placeholder="Num Series" />
+            <button type="submit">Confirmar</button>
+        </form>
+    </div>
+</div>
+
+<button id="agregar-tarjeta">Nueva Serie</button>
+
+@section Scripts {
+    <script>
+        document.getElementById('agregar-tarjeta').addEventListener('click', function () {
+            var nuevaTarjeta = document.getElementById('nueva-tarjeta').cloneNode(true);
+            nuevaTarjeta.id = '';
+            document.getElementById('tarjetas-container').appendChild(nuevaTarjeta);
+        });
+    </script>
+}
+
+<style>
+    .tarjeta {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        display: inline-block;
+        width: 200px;
+    }
+
+</style>
