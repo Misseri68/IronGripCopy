@@ -1,59 +1,199 @@
 ﻿@model List<Tag>
 
-<div>
-    <h3>Tags</h3>
-    <button style="corner-radius:15px;" class="btn btn-danger"><a asp-action="Create" asp-controller="Tags">Nuevo Tag</a></button>
-</div>
-
-<table class="gym-table">
-    <thead>
-        <tr>
-            <th>Color</th>
-            <th>Nombre</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (Tag tag in Model) 
-        {
-        <tr>
-            <td style="background-color:@tag.Color"></td>
-            <td>@tag.Nombre</td>
-            <td>
-                <a>Editar</a>
-                <a>Borrar</a>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
-
 <style>
+    :root {
+        --primary-color: #FC5B04;
+        --accent-color: orange;
+        --background-color: #2c2c2c;
+        --card-background: #0c0c0d;
+        --text-color: white;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --border-radius: 12px;
+        --blue-color: #205c77;
+    }
 
+    .tags-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 10px;
+    }
+
+    .tags-header {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+        .tags-header h3 {
+            margin: 0 0 15px 0;
+            color: var(--primary-color);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        background-color: rgba(252, 91, 4, 0.15);
+        color: var(--primary-color);
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+        .btn:hover {
+            background-color: rgba(252, 91, 4, 0.3);
+            transform: translateY(-2px);
+        }
+
+    .btn-danger {
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        color: white;
+        box-shadow: 0 4px 10px rgba(252, 91, 4, 0.3);
+    }
+
+    .btn a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
 
     .gym-table {
         width: 100%;
-        border-collapse: collapse;
-        border-radius: 8px;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: var(--border-radius);
         overflow: hidden;
+        box-shadow: var(--shadow);
+        margin-bottom: 20px;
     }
 
+        .gym-table thead {
+            background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        }
+
         .gym-table th {
-            background-color: #FC5B04;
+            padding: 14px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
             color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+            .gym-table th:first-child {
+                border-top-left-radius: 8px;
+            }
+
+            .gym-table th:last-child {
+                border-top-right-radius: 8px;
+            }
+
+        .gym-table td {
+            background-color: var(--card-background);
+            color: var(--text-color);
             padding: 12px;
             text-align: center;
         }
 
-        .gym-table td {
-            background-color: #333;
-            color: orange;
-            padding: 10px;
-            text-align: center;
-            border-bottom: 2px solid #FC5B04;
+        .gym-table tbody tr:nth-child(odd) td {
+            border-bottom: 1px solid orange;
         }
 
-        .gym-table tbody tr:hover {
-            background-color: #444;
+        .gym-table tbody tr:nth-child(even) td {
+            border-bottom: 1px solid orange;
         }
+
+        .gym-table tr:last-child td {
+            border-bottom: none;
+        }
+
+            .gym-table tr:last-child td:first-child {
+                border-bottom-left-radius: 8px;
+            }
+
+            .gym-table tr:last-child td:last-child {
+                border-bottom-right-radius: 8px;
+            }
+
+        .gym-table tbody tr:hover td {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+    .color-cell {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin: 0 auto;
+    }
+
+    .action-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        margin: 0 5px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+
+        .action-link:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+    .edit-link {
+        color: var(--blue-color);
+    }
+
+    .delete-link {
+        color: #ff4d4d;
+    }
+
+    .button-container {
+        text-align: center;
+        margin-top: 20px;
+    }
 </style>
+
+<div class="tags-container">
+    <div class="tags-header">
+        <h3>Tags</h3>
+    </div>
+
+    <table class="gym-table">
+        <thead>
+            <tr>
+                <th>Color</th>
+                <th>Nombre</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Tag tag in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="color-cell" style="background-color:@tag.Color"></div>
+                    </td>
+                    <td>@tag.Nombre</td>
+                    <td>
+                        <a href="#" class="action-link edit-link">Editar</a>
+                        <a href="#" class="action-link delete-link">Borrar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="button-container">
+        <button class="btn btn-danger">
+            <a asp-action="Create" asp-controller="Tags">Nuevo Tag</a>
+        </button>
+    </div>
+</div>

@@ -72,33 +72,33 @@ namespace IronGrip.Controllers
         {
             VistaEntrenamiento vista = this.memoryCache.Get<VistaEntrenamiento>("NEWENTRENAMIENTO");
             PartialEjercicioModel ejModel = vista.EjerciciosHechosModel.Find(x => x.EjercicioHecho.Id == idModel);
-            
-            bool existeSerie = false;
-            foreach(Serie s in ejModel.Series)
-            {
-                if(s.Id == serie.Id)
-                {
-                    existeSerie = true; 
-                    break;
-                }
-            }
-
-            if (!existeSerie) 
-            {
                 serie.Id = await GetMaxIdCacheSeries();
                 serie.IdEjercicioHecho = ejModel.EjercicioHecho.Id;
                 ejModel.Series.Add(serie);
-            }
-            else
-            {
-                int index = ejModel.Series.FindIndex(x => x.Id == serie.Id);
-                ejModel.Series[index] = serie;
-            }
             this.memoryCache.Set("NEWENTRENAMIENTO", vista);
             return View(ejModel);
-
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateSeries(Serie serie, int idModel)
+        {
+            VistaEntrenamiento vista = this.memoryCache.Get<VistaEntrenamiento>("NEWENTRENAMIENTO");
+            PartialEjercicioModel ejModel = vista.EjerciciosHechosModel.Find(x => x.EjercicioHecho.Id == idModel);
+
+            int index  =  ejModel.Series.FindIndex(x => x.Id == serie.Id);
+            ejModel.Series[index] = serie;
+            this.memoryCache.Set("NEWENTRENAMIENTO", vista);
+            return RedirectToAction("CreateSeries", new {idModel = idModel});
+        }
+
+        public IActionResult DeleteEjercicio(int id)
+        {
+            VistaEntrenamiento vista = this.memoryCache.Get<VistaEntrenamiento>("NEWENTRENAMIENTO");
+            PartialEjercicioModel ejModel = vista.EjerciciosHechosModel.Find(x => x.EjercicioHecho.Id == id);
+            vista.EjerciciosHechosModel.Remove(ejModel);
+            this.memoryCache.Set("NEWENTRENAMIENTO", vista);
+            return RedirectToAction("Create", "Entrenamientos");
+        }
 
         public async Task<int> GetMaxIdCache() {
             int maxNum = await this.repo.GetMaxIdAsync();

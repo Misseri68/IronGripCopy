@@ -22,10 +22,6 @@ namespace IronGrip.Controllers
         {
             int idUsuario = HttpContext.Session.GetObject<Usuario>("USER").Id;
             List<Ejercicio> ejercicios = await this.repo.GetEjerciciosAsync(idUsuario);
-            foreach(Ejercicio e in ejercicios)
-            {
-                e.Tags = await this.repo.GetTagsEjercicioAsync(e.Id);
-            }
             return View(ejercicios);
         }
 
@@ -45,7 +41,7 @@ namespace IronGrip.Controllers
             }
             int idUsuario = HttpContext.Session.GetObject<Usuario>("USER").Id;
             await this.repo.CreateEjercicioAsync(nombre, descripcion, fileName, esTiempo, idUsuario );
-            return View();
+            return RedirectToAction("Index");
         }
     }
 }

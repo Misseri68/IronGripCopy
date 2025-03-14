@@ -16,7 +16,7 @@ namespace IronGrip.Models
 
 
         [Column("notas")]
-        public string Notas { get; set; }
+        public string? Notas { get; set; }
 
 
         [Column("id_usuario")] //FOREIGN KEY

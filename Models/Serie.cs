@@ -10,6 +10,7 @@ namespace IronGrip.Models
         public Serie()
         {
             this.NumSeries = 1;
+            this.Peso = 10;
             this.Repeticiones = 10;
         }
 
@@ -24,7 +25,7 @@ namespace IronGrip.Models
         public int Repeticiones { get; set; }
 
         [Column("tiempo")]
-        public int TiempoMins { get; set; }
+        public int? TiempoMins { get; set; }
 
         [Column("num_series")]
         public int NumSeries { get; set; }

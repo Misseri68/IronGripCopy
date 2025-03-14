@@ -18,5 +18,6 @@ namespace IronGrip.Models
 
         [Column("id_usuario")] //FOREIGN KEY
         public int IdUsuario { get; set; }
+
     }
 }

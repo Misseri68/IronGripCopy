@@ -1,1 +1,6 @@
-﻿<h1>Hola</h1>
+﻿@model Usuario
+<h1>Hola @Model.Nombre</h1>
+
+<h4>Correo: @Model.Email</h4>
+
+<a asp-action="Salir">Salir</a>

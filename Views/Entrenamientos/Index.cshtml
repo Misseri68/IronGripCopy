@@ -1,0 +1,173 @@
+﻿@using System.Globalization
+@model List<Entrenamiento>
+@{
+    ViewData["Title"] = "Historial de Entrenamientos";
+
+    // Agrupar entrenamientos por semana
+    var entrenamientosPorSemana = Model
+        .OrderByDescending(e => e.Fecha) // Ordenar por fecha descendente
+        .GroupBy(e =>
+        {
+            // Obtener el inicio de la semana (lunes)
+            DateTime startOfWeek = e.Fecha.Date.AddDays(-(int)e.Fecha.DayOfWeek + 1);
+            if (e.Fecha.DayOfWeek == DayOfWeek.Sunday) startOfWeek = startOfWeek.AddDays(-7);
+
+            // Fin de semana (domingo)
+            DateTime endOfWeek = startOfWeek.AddDays(6);
+
+            return new
+            {
+                StartDate = startOfWeek,
+                EndDate = endOfWeek,
+                WeekNumber = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(
+                    e.Fecha, CalendarWeekRule.FirstDay, DayOfWeek.Monday)
+            };
+        })
+        .ToList();
+}
+
+@section Styles {
+        <style>
+            :root { 
+                --primary-color: #FC5B04; 
+                --accent-color: orange; 
+                --background-color: #121212; 
+                --card-background: #0c0c0d; 
+                --text-color: white; 
+                --shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+                --border-radius: 12px; 
+            }
+
+            body .phone-container {
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+            }
+
+            h1 { 
+                text-align: center; 
+                margin-bottom: 20px; 
+                color: var(--primary-color);
+                font-size: 24px;
+            }
+
+            .semana-container {
+                margin-bottom: 24px;
+            }
+
+            .semana-header {
+                background-color: var(--primary-color);
+                color: white;
+                padding: 10px 15px;
+                border-radius: var(--border-radius) var(--border-radius) 0 0;
+                margin-bottom: 2px;
+                font-weight: bold;
+                display: flex;
+                justify-content: space-between;
+            }
+
+            .entrenamiento-item {
+                background-color: var(--card-background);
+                margin-bottom: 2px;
+                padding: 12px 15px;
+                border-left: 3px solid var(--accent-color);
+            }
+
+            .entrenamiento-item:last-child {
+                border-radius: 0 0 var(--border-radius) var(--border-radius);
+                margin-bottom: 0;
+            }
+
+            .fecha {
+                font-size: 14px;
+                color: #ccc;
+                margin-bottom: 4px;
+            }
+
+            .notas {
+                color: #fff;
+            }
+
+            .empty-state {
+                text-align: center;
+                background-color: var(--card-background);
+                padding: 30px 15px;
+                border-radius: var(--border-radius);
+                color: #ccc;
+            }
+
+            .add-button {
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 12px 0;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                width: 100%;
+                margin-top: 15px;
+                margin-bottom: 24px;
+                display: block;
+                text-align: center;
+                text-decoration: none;
+            }
+
+            .add-button:hover {
+                background-color: var(--accent-color);
+                color: white;
+                text-decoration: none;
+            }
+
+            .container {
+                padding-bottom: 40px;
+            }
+        </style>
+}
+
+<h1>Mis Entrenamientos</h1>
+
+<a asp-action="Create" class="add-button">Nuevo Entrenamiento</a>
+
+@if (Model != null && Model.Count > 0)
+{
+    @foreach (var semana in entrenamientosPorSemana)
+    {
+                <div class="semana-container">
+                    <div class="semana-header">
+                        <span>Semana @semana.Key.WeekNumber</span>
+                        <span>@semana.Key.StartDate.ToString("dd/MM") - @semana.Key.EndDate.ToString("dd/MM")</span>
+                    </div>
+
+            @foreach (var entrenamiento in semana.OrderByDescending(e => e.Fecha))
+            {
+                <div class="entrenamiento-item">
+                    <div class="fecha">
+                        @entrenamiento.Fecha.ToString("dddd, dd MMM yyyy")
+                        @entrenamiento.Fecha.ToString("HH:mm")
+                    </div>
+                    <div class="notas">@entrenamiento.Notas</div>
+                </div>
+            }
+                </div>
+    }
+}
+else
+{
+        <div class="empty-state">
+            <p>No hay entrenamientos registrados.</p>
+            <p>¡Comienza a entrenar hoy!</p>
+        </div>
+}
+
+@section Scripts {
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Forzar scroll en el contenedor principal
+                var phoneContainer = document.querySelector('.phone-container');
+                if (phoneContainer) {
+                    phoneContainer.style.overflowY = 'auto';
+                    phoneContainer.style.overflowX = 'hidden';
+                }
+            });
+        </script>
+}

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using IronGrip.Extensions;
+using IronGrip.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace IronGrip.Controllers
 {
@@ -11,7 +13,22 @@ namespace IronGrip.Controllers
 
         public IActionResult Perfil()
         {
-            return View();
+            Usuario usuario = HttpContext.Session.GetObject<Usuario>("USER");
+            if(usuario != null)
+            {
+                return View(usuario);
+
+            }
+            else
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+        }
+
+        public IActionResult Salir()
+        {
+            HttpContext.Session.Remove("USER");
+            return RedirectToAction("Login", "Auth");
         }
     }
 }

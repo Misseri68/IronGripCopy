@@ -1,46 +1,216 @@
 ﻿@model VistaEntrenamiento
 
-<div class="d-flex">
-    <h4>A por todas!!</h4>
-    <button class="btn btn-danger">X</button>
-</div>
+<style>
+    :root {
+        --primary-color: #FC5B04;
+        --accent-color: orange;
+        --background-color: #2c2c2c;
+        --card-background: #0c0c0d;
+        --text-color: white;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --border-radius: 8px;
+    }
 
-<div style="background-color:darkslategray">
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 10px;
+    }
 
-    <select id="tag-select">
-        <option value="">-- Selecciona un tag --</option>
-        <option value="newTag"><a asp-action="Create" asp-controller="Tags">+ Nuevo tag</a></option>
-        @if(Model.TagsDisponibles != null)
-        {
-            @foreach (var tag in Model.TagsDisponibles)
-            {
-                var seleccionado = Model.SelectedTags.Contains(tag.Id);
-                <option value="@tag.Id" data-color="@tag.Color" disabled="@(seleccionado)">
-                    @tag.Nombre @(seleccionado ? "✓" : "")
-                </option>
+    .container {
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    .card {
+        background-color: var(--card-background);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    h4 {
+        margin: 0;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+
+    .btn-close {
+        background-color: transparent;
+        color: var(--text-color);
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 2px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+    }
+
+        .btn-close:hover {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+    select {
+        width: 100%;
+        padding: 8px 12px;
+        background-color: #333;
+        color: var(--text-color);
+        border: 1px solid #444;
+        border-radius: var(--border-radius);
+        font-size: 14px;
+        margin-bottom: 12px;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+        cursor: pointer;
+    }
+
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(252, 91, 4, 0.2);
+        }
+
+        select option {
+            background-color: #333;
+            color: var(--text-color);
+            padding: 8px;
+        }
+
+            select option:disabled {
+                opacity: 0.5;
             }
-        }
-    </select>
 
-    <div id="selected-tags">
-        @foreach (var tag in Model.TagsDisponibles.Where(t => Model.SelectedTags.Contains(t.Id)))
-        {
-            <span class="tag-box" data-id="@tag.Id" style="background-color: @tag.Color;">
-                @tag.Nombre <button type="button" class="remove-tag">X</button>
-            </span>
+    #selected-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+    .tag-box {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 16px;
+        font-size: 13px;
+        color: white;
+        margin-right: 3px;
+        margin-bottom: 3px;
+    }
+
+    .remove-tag {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.8);
+        cursor: pointer;
+        font-size: 11px;
+        margin-left: 4px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+    }
+
+        .remove-tag:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+            color: white;
         }
+
+    .submit-button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 10px 16px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: block;
+        width: 100%;
+        margin-top: 12px;
+    }
+
+        .submit-button:hover {
+            background-color: var(--accent-color);
+        }
+
+    .tags-section {
+        border-radius: var(--border-radius);
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: rgba(47, 79, 79, 0.3);
+    }
+
+    .ejercicios-container {
+        margin-top: 12px;
+        margin-bottom: 12px;
+    }
+</style>
+
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h4>¡A por todas!!</h4>
+            <a asp-action="Cancelar"><button class="btn-close">✕</button></a>
+        </div>
+
+        <div class="tags-section">
+            <select id="tag-select">
+                <option value="">-- Selecciona un tag --</option>
+                <option value="newTag">+ Nuevo tag</option>
+                @if (Model.TagsDisponibles != null)
+                {
+                    @foreach (var tag in Model.TagsDisponibles)
+                    {
+                        var seleccionado = Model.SelectedTags.Contains(tag.Id);
+                        <option value="@tag.Id" data-color="@tag.Color" disabled="@(seleccionado)">
+                            @tag.Nombre @(seleccionado ? "✓" : "")
+                        </option>
+                    }
+                }
+            </select>
+
+            <div id="selected-tags">
+                @foreach (var tag in Model.TagsDisponibles.Where(t => Model.SelectedTags.Contains(t.Id)))
+                {
+                    <span class="tag-box" data-id="@tag.Id" style="background-color: @tag.Color;">
+                        @tag.Nombre <button type="button" class="remove-tag">✕</button>
+                    </span>
+                }
+            </div>
+        </div>
+
+        <div class="ejercicios-container">
+            @Html.Partial("_partialEjercicioCard", Model.EjerciciosHechosModel ?? new List<PartialEjercicioModel>())
+        </div>
+        <a asp-action="GuardarEntrenamiento"> <button class="submit-button">Guardar entrenamiento</button></a>
+       
     </div>
 </div>
 
-<div>
-        @Html.Partial("_partialEjercicioCard", Model.EjerciciosHechosModel ?? new List<PartialEjercicioModel>())
-</div>
-
-<form method="post">
-    <button>Enviar</button>
-</form>
-
-@section Scripts{
+@section Scripts {
     <script>
         const tagSelect = document.getElementById('tag-select');
         const selectedTagsDiv = document.getElementById('selected-tags');
@@ -54,7 +224,7 @@
 
         function actualizarServidor() {
             if (selectedTagsSet.size === 0) {
-            return; // No hace nada si no hay tags seleccionados
+                return; // No hace nada si no hay tags seleccionados
             }
             // Creamos un form invisible solo para enviar los datos al servidor
             const form = document.createElement('form');
@@ -86,19 +256,19 @@
             span.className = 'tag-box';
             span.style.backgroundColor = color;
             span.dataset.id = id;
-            span.innerHTML = `${nombre} <button type="button" class="remove-tag">X</button>`;
+            span.innerHTML = `${nombre} <button type="button" class="remove-tag">✕</button>`;
             selectedTagsDiv.appendChild(span);
         }
 
         tagSelect.addEventListener('change', () => {
             const selectedValue = tagSelect.value;
-            if (selectedValue === "nuevo") {
+            if (selectedValue === "newTag") {
                 window.location.href = "/Tags/Create";
                 return;
             }
 
             const id = parseInt(selectedValue);
-            if (selectedTagsSet.has(id)) return;
+            if (!id || selectedTagsSet.has(id)) return;
 
             const option = tagSelect.options[tagSelect.selectedIndex];
             const color = option.getAttribute('data-color');
@@ -135,10 +305,7 @@
         // Al inicio: desactivar opciones seleccionadas
         selectedTagsSet.forEach(id => desactivarOpcion(id));
 
-
-
         $(document).ready(function () {
-            console.log("HOLA")
             $('input[name="listGroupCheckableRadios"]').on('click', function () {
                 const selectedValue = $(this).val();
                 if (selectedValue === 'newEjercicio') {
@@ -146,28 +313,5 @@
                 }
             });
         });
-
-
-
     </script>
 }
-
-<style>
-    .tag-box {
-        display: inline-block;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 10px;
-        margin-right: 5px;
-        margin-top: 5px;
-    }
-
-    .tag-box button {
-        background: none;
-        border: none;
-        color: white;
-        margin-left: 5px;
-        cursor: pointer;
-    }
-
-</style>

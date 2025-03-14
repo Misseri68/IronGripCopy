@@ -1,105 +1,257 @@
 ﻿@model Usuario
-<h3 class="text-center"> ¡Al ataque, @Model.Nombre!</h3>
-<div class="main-container">
-    <div class="cards-section">
-        <div class="card">
-            <div class="card-body">
-                Estadísticas
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <button class="btn btn-danger">Entrenamientos</button>
-                <button class="btn btn-danger"><a asp-controller="Ejercicios" asp-action="Index">Ejercicios</a></button>
-                <button class="btn btn-danger"><a asp-action="Index" asp-controller="Tags">Tags</a></button>
-            </div>
-        </div>
-    </div>
-    
-</div>
-
-<div class="fixed-bottom-button">
-    <button class="btn-entrenar"><a asp-controller="Entrenamientos" asp-action="Create" style="text-decoration:none; color:white;">Nuevo entrenamiento</a></button>
-</div>
 
 <style>
-    h3 {
-        text-align: center;
-        margin-bottom: 20px;
+    :root {
+        --primary-color: #FC5B04;
+        --accent-color: orange;
+        --background-color: #2c2c2c;
+        --card-background: #0c0c0d;
+        --text-color: white;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --border-radius: 12px;
+        --blue-color: #0b8ee6;
     }
 
-    .main-container {
-        width: 100%;
+    body {
+        background-color: var(--background-color);
+        color: var(--text-color);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dashboard-container {
         display: flex;
-        justify-content: center;
-        padding: 0 15px;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .welcome-header {
+        color: var(--primary-color);
+        font-size: 20px;
+        font-weight: 700;
+        margin: 12px 0;
+        text-align: center;
+        padding-bottom: 6px;
+        border-bottom: 2px solid var(--primary-color);
+        width: 80%;
+        max-width: 400px;
     }
 
     .cards-section {
         display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 20px;
+        flex-direction: column;
         width: 100%;
-        max-width: 1200px;
+        gap: 12px;
+        margin-bottom: 20px;
     }
 
     .card {
-        background: #2c2c2c;
-        flex: 1;
-        min-width: 300px;
-        max-width: 500px;
-        margin: 10px;
-        border-radius: 10px;
+        background: var(--card-background);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        width: 100%;
+        border-left: 3px solid var(--primary-color);
+    }
+
+    .card-stats {
+        border-left: 3px solid var(--blue-color);
+    }
+
+    .card-header {
+        background-color: rgba(0, 0, 0, 0.2);
+        padding: 10px 15px;
+        font-weight: 600;
+        font-size: 16px;
+        color: #0b8ee6;
+        border-bottom: 1px solid #333;
+    }
+
+    .card-stats .card-header {
+        color: var(--blue-color);
     }
 
     .card-body {
-        padding: 20px;
-        color: white;
+        padding: 15px;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 10px;
+        gap: 8px;
     }
 
-    .fixed-bottom-button {
+    .actions-layout {
+        display: flex;
+        flex-direction: column;
         width: 100%;
-        text-align: center;
-        margin-bottom:10px;
+        gap: 8px;
     }
 
-    .btn-entrenar {
-        background: #FC5B04;
-        padding: 10px 20px;
-        border-radius: 10px;
-        color: white;
-        border: none;
-        font-weight: bold;
-    }
-
-    .btn-entrenar:hover {
-        background-color: orange;
+    .actions-row {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
     }
 
     .btn {
-        padding: 0.75rem;
-        border: 2px solid #FC5B04;
-        background: transparent;
-        color: #FC5B04;
-        font-size: 1rem;
+        padding: 8px 12px;
+        border: none;
+        background-color: rgba(252, 91, 4, 0.15);
+        color: var(--primary-color);
+        font-size: 14px;
+        font-weight: 600;
+        border-radius: 8px;
         cursor: pointer;
-        border-radius: 5px;
-        transition: background 0.3s ease, color 0.3s ease;
-        margin: 5px;
+        transition: all 0.2s ease;
+        text-align: center;
+        min-width: 100px;
+    }
+
+    .btn-full {
+        width: 100%;
+    }
+
+    .btn-half {
+        flex: 1;
+        color: orange;
+        background-color: rgba(orange, 0.15);
     }
 
     .btn:hover {
-        background: #FC5B04;
-        color: white;
+        background-color: rgba(252, 91, 4, 0.3);
+        transform: translateY(-2px);
     }
+
+    .btn-blue {
+        background-color: rgba(32, 92, 119, 0.15);
+        color: var(--blue-color);
+    }
+
+        .btn-blue:hover {
+            background-color: rgba(32, 92, 119, 0.3);
+        }
 
     .btn a {
         text-decoration: none;
         color: inherit;
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 8px 0;
+        border-bottom: 1px solid #333;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color:white;
+        opacity: 0.8;
+    }
+
+    .stat-value {
+        font-weight: 600;
+        color: var(--accent-color);
+    }
+
+    .bottom-button-container {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .btn-entrenar {
+        background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+        padding: 12px 24px;
+        border-radius: 50px;
+        color: white;
+        border: none;
+        font-weight: bold;
+        font-size: 16px;
+        box-shadow: 0 4px 10px rgba(252, 91, 4, 0.3);
+        transition: all 0.3s ease;
+        width: 80%;
+        max-width: 300px;
+    }
+
+        .btn-entrenar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(252, 91, 4, 0.4);
+        }
+
+        .btn-entrenar:active {
+            transform: translateY(0);
+        }
+
+    .system-message {
+        font-size: 12px;
+        color: var(--blue-color);
+        text-align: center;
+        margin-top: 5px;
     }
 </style>
+
+<div class="dashboard-container">
+    <h3 class="welcome-header">¡Al ataque, @Model.Nombre!</h3>
+
+    <div class="cards-section">
+        <div class="card card-stats">
+            <div class="card-header">Estadísticas</div>
+            <div class="card-body">
+                <div class="stat-item">
+                    <span class="stat-label">Entrenamientos totales</span>
+                    <span class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Ejercicios completados</span>
+                    <span class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Series acumuladas</span>
+                    <span class="stat-value">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Fortalécete</div>
+            <div class="card-body">
+                <div class="actions-layout">
+                    <div class="actions-row">
+                        <button class="btn btn-full">
+                            <a asp-controller="Entrenamientos" asp-action="Index">Entrenamientos</a>
+                        </button>
+                    </div>
+                    <div class="actions-row">
+                        <button class="btn btn-half">
+                            <a asp-controller="Ejercicios" asp-action="Index">Ejercicios</a>
+                        </button>
+                        <button class="btn btn-half btn-blue">
+                            <a asp-action="Index" asp-controller="Tags">Tags</a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (ViewData["MENSAJE"] != null)
+    {
+        <small class="system-messagemb-5">@ViewData["MENSAJE"]</small>
+    }
+
+    <div class="bottom-button-container mt-5">
+        <button class="btn-entrenar">
+            <a asp-controller="Entrenamientos" asp-action="Create" style="text-decoration:none; color:white;">Nuevo entrenamiento</a>
+        </button>
+    </div>
+</div>

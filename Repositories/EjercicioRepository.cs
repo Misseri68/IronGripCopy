@@ -59,16 +59,6 @@ namespace IronGrip.Repositories
             }
         }
 
-        public async Task<List<Tag>> GetTagsEjercicioAsync(int idEjercicio)
-        {
-            List<EjercicioTag> ejTag = await this.context.EjerciciosTags
-                .Where(x => x.IdEjercicio == idEjercicio).ToListAsync();
-            List<int> ids = ejTag.Select(x => x.IdTag).ToList() ;
-
-            return await this.context.Tags
-                .Where(x => ids.Contains(x.Id)).ToListAsync();
-
-        }
 
 
     }

@@ -25,6 +25,7 @@
                 kilos += ((int)s.Peso) * s.NumSeries ; 
             }
             int numSeries = NumTotalSeries();
+            if (numSeries == 0) return 0;
             return kilos / numSeries;
         }
 

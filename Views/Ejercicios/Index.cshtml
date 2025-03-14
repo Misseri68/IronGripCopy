@@ -1,69 +1,177 @@
 ﻿@model List<Ejercicio>
+@{
+    // Script para modificar el comportamiento de scroll en esta vista específica
+    ViewData["RequiresScroll"] = true;
+}
 
-<button><a asp-action="Create"> Crear nuevo entrenamiento </a></button>
+<h1>Mis Entrenamientos</h1>
 
-@if(Model != null){
-    <div class="container">
+<!-- Tarjeta para crear nuevo ejercicio -->
+<div class="tarjeta" id="nueva-tarjeta">
+    <a asp-action="Create">
+        <button>Crear nuevo entrenamiento</button>
+    </a>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="ejercicios-lista">
         @foreach (var ejercicio in Model)
         {
-            <div class="card">
-                <img src="@ejercicio.Foto" alt="@ejercicio.Nombre">
-                <h2>@ejercicio.Nombre</h2>
-                <p>@ejercicio.Descripcion</p>
-                @if (ejercicio.EsTiempo)
-                {
-                    <span>⏱️</span>
-                }
-                <div class="tags">
-                    @foreach (var tag in ejercicio.Tags)
+            <div class="tarjeta ejercicio">
+                <div class="tarjeta-header">
+                    <h2>@ejercicio.Nombre</h2>
+                    @if (ejercicio.EsTiempo)
                     {
-                        <div class="tag">
-                            <div class="tag-circle" style="background-color: @tag.Color;"></div>
-                            <span>@tag.Nombre</span>
-                        </div>
+                        <span class="tiempo-icon">⏱️</span>
                     }
+                </div>
+                <div class="ejercicio-imagen">
+                    <img src="~/images/uploads/@ejercicio.Foto" alt="@ejercicio.Nombre">
+                </div>
+                <div class="ejercicio-descripcion">
+                    <p>@ejercicio.Descripcion</p>
                 </div>
             </div>
         }
     </div>
-}else{
-    <p>No hay ejercicios aún.</p>
+}
+else
+{
+    <div class="tarjeta mensaje-vacio">
+        <p>No hay ejercicios aún.</p>
+    </div>
 }
 
-
 <style>
-    body {
-        background-color: #121212;
-        color: #ffffff;
-        font-family: Arial, sans-serif;
+    /* Variables de colores */
+    :root {
+        --primary-color: #FC5B04;
+        --accent-color: orange;
+        --background-color: #121212;
+        --card-background: #0c0c0d;
+        --text-color: white;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --border-radius: 12px;
     }
 
-    .card {
-        background-color: #1e1e1e;
-        border-radius: 10px;
+    /* Sobrescribir el estilo del contenedor principal */
+    body .phone-container {
+        overflow-y: auto !important;
+    }
+
+    /* Asegurar que main llena el espacio disponible */
+    body .container main {
+        display: flex;
+        flex-direction: column;
         padding: 15px;
-        margin: 10px 0;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding-bottom: 80px;
     }
 
-        .card img {
-            width: 100%;
-            border-radius: 10px;
+    /* Estilos básicos */
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+        font-size: 24px;
+    }
+
+    .ejercicios-lista {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Estilos de las tarjetas */
+    .tarjeta {
+        background-color: var(--card-background);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+    }
+
+    /* Tarjeta para añadir nuevo ejercicio */
+    #nueva-tarjeta {
+        border-left: 4px solid var(--accent-color);
+        padding: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Botón */
+    button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        height: 50px;
+    }
+
+        button:hover {
+            background-color: var(--accent-color);
         }
 
-    .tag {
-        display: inline-flex;
+    /* Encabezado de tarjeta */
+    .tarjeta-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        justify-content: space-between;
         align-items: center;
-        background-color: #333;
-        border-radius: 15px;
-        padding: 5px 10px;
-        margin: 5px 5px 0 0;
     }
 
-    .tag-circle {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        margin-right: 5px;
+    h2 {
+        margin: 0;
+        font-size: 18px;
+    }
+
+    /* Ejercicio específico */
+    .ejercicio-imagen img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .ejercicio-descripcion {
+        padding: 12px 16px;
+    }
+
+        .ejercicio-descripcion p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+    .tiempo-icon {
+        font-size: 1.2rem;
+    }
+
+    .mensaje-vacio {
+        text-align: center;
+        padding: 20px;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
     }
 </style>
+
+@section Scripts {
+    <script>
+        // Script para asegurar que el contenedor del teléfono tenga scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            // Forzar overflow-y: auto en el contenedor del teléfono
+            var phoneContainer = document.querySelector('.phone-container');
+            if (phoneContainer) {
+                phoneContainer.style.overflowY = 'auto';
+                phoneContainer.style.overflowX = 'hidden';
+            }
+        });
+    </script>
+}

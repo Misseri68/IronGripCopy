@@ -4,6 +4,7 @@ using IronGrip.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using System.Threading.Tasks;
 
 namespace IronGrip.Controllers
 {
@@ -20,9 +21,11 @@ namespace IronGrip.Controllers
             this.memoryCache = memoryCache;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            int idUsuario = HttpContext.Session.GetObject<Usuario>("USER").Id;
+            List<Entrenamiento> entrenamientos = await this.repo.GetEntrenamientosAsync(idUsuario);
+            return View(entrenamientos);
         }
 
         public async Task<IActionResult> Create()
@@ -32,7 +35,7 @@ namespace IronGrip.Controllers
             if(memoryCache.Get("NEWENTRENAMIENTO") == null)
             {
                 model = new VistaEntrenamiento();
-                model.Id = 1;
+                model.Id = await this.repo.GetMaxIdAsync();
                 model.Entrenamiento.IdUsuario = idUsuario;
                 memoryCache.Set("NEWENTRENAMIENTO", model);
             }
@@ -44,6 +47,27 @@ namespace IronGrip.Controllers
             model.TagsDisponibles = await this.tagRepo.GetTagsAsync(idUsuario);
 
             return View(model);
+        }
+
+      
+        public async Task<IActionResult> GuardarEntrenamiento() 
+        {
+            VistaEntrenamiento model;
+            if (memoryCache.Get("NEWENTRENAMIENTO") == null)
+            {
+                return RedirectToAction("Create");
+            }else
+            {
+                model = memoryCache.Get<VistaEntrenamiento>("NEWENTRENAMIENTO");
+                await this.repo.InsertFullEntrenamientoAsync(model);
+                return RedirectToAction("Index");
+            }
+        }
+
+        public IActionResult Cancelar()
+        {
+            this.memoryCache.Remove("NEWENTRENAMIENTO");
+            return RedirectToAction("Home", "Home");
         }
 
         [HttpPost]

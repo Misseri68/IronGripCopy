@@ -1,52 +1,350 @@
 ﻿@model PartialEjercicioModel
 
-<h3>@Model.Ejercicio.Nombre</h3>
+<style>
+    :root {
+        --primary-color: #FC5B04;
+        --accent-color: orange;
+        --background-color: #2c2c2c;
+        --card-background: #0c0c0d;
+        --text-color: white;
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --border-radius: 8px;
+        --blue-color: #205c77;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 8px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 0 2px;
+    }
+
+    .header-title {
+        flex: 1;
+        text-align: center;
+        margin: 0;
+        color: var(--primary-color);
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .btn-back {
+        background-color: transparent;
+        color: var(--blue-color);
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+    }
+
+        .btn-back:hover {
+            background-color: rgba(52, 152, 219, 0.2);
+        }
+
+    .btn-close {
+        background-color: transparent;
+        color: var(--text-color);
+        border: none;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+    }
+
+        .btn-close:hover {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+
+    /* Contenedor de tarjetas */
+    #tarjetas-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-width: 100%;
+        margin: 0 auto;
+        padding-bottom: 8px;
+    }
+
+    /* Estilo de tarjetas */
+    .tarjeta {
+        background-color: var(--card-background);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+        .tarjeta:active {
+            transform: scale(0.98);
+        }
+
+    /* Tarjeta para añadir nuevo ejercicio */
+    #nueva-tarjeta {
+        border-left: 3px solid var(--accent-color);
+        height: 40px;
+        overflow: hidden;
+        transition: height 0.3s ease-in-out;
+    }
+
+        #nueva-tarjeta:hover,
+        #nueva-tarjeta.expanded {
+            height: 90px;
+        }
+
+        #nueva-tarjeta .collapsed-view {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        #nueva-tarjeta:hover .collapsed-view,
+        #nueva-tarjeta.expanded .collapsed-view {
+            display: none;
+        }
+
+        #nueva-tarjeta form {
+            display: none;
+        }
+
+        #nueva-tarjeta:hover form,
+        #nueva-tarjeta.expanded form {
+            display: flex;
+        }
+
+    #tarjeta-hecha {
+        border-left: 3px solid var(--blue-color);
+    }
+
+    /* Formularios */
+    .tarjeta form {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 8px;
+        gap: 4px;
+    }
+
+    /* Inputs */
+    .tarjeta input[type="number"] {
+        flex: 1;
+        min-width: 40px;
+        padding: 6px 8px;
+        border: 1px solid #444;
+        border-radius: var(--border-radius);
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.3s;
+        background-color: #333;
+        color: var(--text-color);
+    }
+
+        .tarjeta input[type="number"]:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(252, 91, 4, 0.2);
+        }
+
+    /* Botón */
+    button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 8px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        width: 100%;
+        height: 34px;
+        margin-top: 4px;
+    }
+
+    .tarjeta button:hover {
+        background-color: var(--accent-color);
+    }
+
+    /* Etiquetas para los campos */
+    .tarjeta label {
+        display: none;
+    }
+
+    /* Etiquetas flotantes para claridad */
+    .input-group {
+        position: relative;
+        flex: 1;
+        min-width: 50px;
+    }
+
+        .input-group input {
+            width: 100%;
+        }
+
+    /* Tarjeta completada */
+    .tarjeta.completed {
+        border-left: 3px solid var(--accent-color);
+        background-color: rgba(46, 204, 113, 0.05);
+    }
+
+    #tarjeta-hecha input[type="number"] {
+        background-color: #1f1f1f;
+        border: 1px solid #555;
+        color: #aaa;
+        font-weight: 400;
+        transition: border-color 0.3s;
+    }
+
+        #tarjeta-hecha input[type="number"]::placeholder {
+            color: #666;
+        }
+
+        #tarjeta-hecha input[type="number"]:focus {
+            border-color: var(--blue-color);
+            box-shadow: none;
+            color: white;
+        }
+
+    /* Botón de Hecho */
+    .btn-done {
+        margin-top: 8px;
+    }
+
+        .btn-done a {
+            text-decoration: none;
+            color: white;
+            display: block;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+</style>
+
+<div class="header">
+    <button class="btn-back" id="botonAtras">←</button>
+    <h3 class="header-title">@Model.Ejercicio.Nombre</h3>
+    <button class="btn-close" id="botonCerrar">✕</button>
+</div>
 
 <div id="tarjetas-container">
+    <!-- Tarjeta para nueva serie con transición -->
+    <div class="tarjeta" id="nueva-tarjeta">
+        <div class="collapsed-view">
+            <span>+</span>
+        </div>
+        <form method="post" asp-action="CreateSeries">
+            <input type="hidden" name="idModel" value="@Model.EjercicioHecho.Id" />
+            <input type="hidden" name="Id" value="@Model.EjercicioHecho.Id" />
+            <div class="input-group">
+                <input type="number" name="NumSeries" placeholder="Series" />
+            </div>
+            <div class="input-group">
+                <input type="number" name="Peso" placeholder="KG" />
+            </div>
+            <div class="input-group">
+                <input type="number" name="Repeticiones" placeholder="TotalReps" />
+            </div>
+
+            <button type="submit">Añadir</button>
+        </form>
+    </div>
+
+    <!-- Series existentes -->
     @foreach (Serie serie in Model.Series)
     {
-        <div class="tarjeta">
-            <form  method="post">
+        <div class="tarjeta" id="tarjeta-hecha">
+            <form method="post" asp-action="UpdateSeries">
                 <input type="hidden" name="idModel" value="@Model.EjercicioHecho.Id" />
                 <input type="hidden" name="Id" value="@serie.Id" />
-                <input type="number" name="Peso" value="@serie.Peso" />
-                <input type="number" name="Repeticiones" value="@serie.Repeticiones" />
-                <input type="number" name="NumSeries" value="@serie.NumSeries" />
-                <button type="submit">Confirmar</button>
+                <div class="input-group">
+                    <input type="number" name="NumSeries" value="@serie.NumSeries" placeholder="Series" />
+                </div>
+                <div class="input-group">
+                    <input type="number" name="Peso" value="@serie.Peso" placeholder="KG" />
+                </div>
+                <div class="input-group">
+                    <input type="number" name="Repeticiones" value="@serie.Repeticiones" placeholder="Reps" />
+                </div>
+                <button type="submit">Actualizar</button>
             </form>
         </div>
     }
-    <div class="tarjeta" id="nueva-tarjeta" >
-        <form  method="post">
-            <input type="hidden" name="idModel" value="@Model.EjercicioHecho.Id" />
-            <input type="hidden" name="Id" value="@Model.EjercicioHecho.Id" />
-            <input type="number" name="Peso" placeholder="Peso" />
-            <input type="number" name="Repeticiones" placeholder="Repeticiones" />
-            <input type="number" name="NumSeries" placeholder="Num Series" />
-            <button type="submit">Confirmar</button>
-        </form>
-    </div>
-</div>
 
-<button id="agregar-tarjeta">Nueva Serie</button>
+    <button class="btn-done" id="btnDone" disabled>
+        <a asp-controller="Entrenamientos" asp-action="Create">Hecho</a>
+    </button>
+</div>
 
 @section Scripts {
     <script>
-        document.getElementById('agregar-tarjeta').addEventListener('click', function () {
-            var nuevaTarjeta = document.getElementById('nueva-tarjeta').cloneNode(true);
-            nuevaTarjeta.id = '';
-            document.getElementById('tarjetas-container').appendChild(nuevaTarjeta);
+        document.addEventListener('DOMContentLoaded', function() {
+            const nuevaTarjeta = document.getElementById('nueva-tarjeta');
+            const collapsedView = document.querySelector('.collapsed-view');
+            const btnDone = document.getElementById('btnDone');
+
+            // Alternar clase expandida al hacer clic
+            collapsedView.addEventListener('click', function() {
+                nuevaTarjeta.classList.toggle('expanded');
+            });
+
+            // Cerrar el formulario al hacer clic fuera
+            document.addEventListener('click', function(event) {
+                if (!nuevaTarjeta.contains(event.target) && nuevaTarjeta.classList.contains('expanded')) {
+                    nuevaTarjeta.classList.remove('expanded');
+                }
+            });
+
+            // Deshabilitar el botón "Hecho" si no hay series
+            function toggleDoneButton() {
+                // Revisamos si hay al menos una tarjeta de serie
+                const tarjetas = document.querySelectorAll('.tarjeta[id^="tarjeta-hecha"]');
+                if (tarjetas.length > 0) {
+                    btnDone.disabled = false;  // Habilitar el botón
+                } else {
+                    btnDone.disabled = true;  // Deshabilitar el botón
+                }
+            }
+
+            // Llamamos a la función para actualizar el estado del botón al cargar la página
+            toggleDoneButton();
+
+            // Escuchamos cambios en el contenedor de tarjetas (cuando se agregan nuevas series)
+            const tarjetaContainer = document.getElementById('tarjetas-container');
+            tarjetaContainer.addEventListener('DOMNodeInserted', toggleDoneButton);
+        });
+
+        // Botones de navegación
+        document.getElementById('botonCerrar').addEventListener('click', function() {
+            window.location.href = "/Entrenamientos/Create";
+        });
+
+        document.getElementById('botonAtras').addEventListener('click', function() {
+            window.history.go(-1);
         });
     </script>
 }
-
-<style>
-    .tarjeta {
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin: 10px;
-        display: inline-block;
-        width: 200px;
-    }
-
-</style>
